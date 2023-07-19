@@ -16,37 +16,29 @@ import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.security.GeneralSecurityException;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
-import static org.example.CalendarCore.*;
-
-/* class to demonstrate use of Calendar events list API */
 public class CalendarQuickstart {
-
-
     public static void main(String... args) throws IOException, GeneralSecurityException {
-        // Build a new authorized API client service.
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         CalendarCore calendarCore = new CalendarCore();
         Calendar service =
                 new Calendar.Builder(HTTP_TRANSPORT, calendarCore.JSON_FACTORY, calendarCore.getCredentials(HTTP_TRANSPORT))
                         .setApplicationName(calendarCore.APPLICATION_NAME)
                         .build();
-        Events events = executeEvents(service);
+        CalendarHendler calendarHendler = new CalendarHendler(service,new DateTime(args[0]),new DateTime(args[1]));
+        Events events = calendarHendler.executeEvents(calendarHendler);
         List<Event> items = events.getItems();
         if (items.isEmpty()) {
             System.out.println("No upcoming events found.");
         } else {
             System.out.println("Events:");
-           getItems(items);
+           calendarHendler.getItems(items);
         }
     }
 }
