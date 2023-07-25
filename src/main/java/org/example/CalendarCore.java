@@ -40,10 +40,6 @@ public class CalendarCore {
      * Directory to store authorization tokens for this application.
      */
     public static final String TOKENS_DIRECTORY_PATH = "tokens";
-    final static String dMinStr = "2023-01-01T00:00:00.000+03:00";
-    final static String dMaxStr = "2023-12-31T00:00:00.000+03:00";
-    final static DateTime dateFrom = new DateTime(dMinStr);
-    final static DateTime dateMax = new DateTime(dMaxStr);
 
     /**
      * Global instance of the scopes required by this quickstart.
