@@ -31,15 +31,15 @@ public class CalendarCore {
     /**
      * Application name.
      */
-    public  final String APPLICATION_NAME = "Google Calendar API Java Quickstart";
+      final static String APPLICATION_NAME = "Google Calendar API Java Quickstart";
     /**
      * Global instance of the JSON factory.
      */
-    public  final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
+      final static JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     /**
      * Directory to store authorization tokens for this application.
      */
-    public static final String TOKENS_DIRECTORY_PATH = "tokens";
+     static final String TOKENS_DIRECTORY_PATH = "tokens";
 
     /**
      * Global instance of the scopes required by this quickstart.
@@ -57,7 +57,7 @@ public class CalendarCore {
      * @throws IOException If the credentials.json file cannot be found.
      */
 
-    public  Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT)
+    static   Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT)
             throws IOException {
         // Load client secrets.
         InputStream in = CalendarQuickstart.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
@@ -77,5 +77,33 @@ public class CalendarCore {
         Credential credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
         //returns an authorized Credential object.
         return credential;
+    }
+    protected Events executeEvents(Calendar service, java.util.Calendar dateFrom, java.util.Calendar dateEnd) throws IOException {
+        DateTime dateTimeStart= new DateTime(dateFrom.getTimeInMillis());
+        DateTime dateTimeEnd= new DateTime(dateEnd.getTimeInMillis());
+        Events events = service.events().list("primary")
+                .setTimeMin(dateTimeStart)
+                .setTimeMax(dateTimeEnd)
+                .setOrderBy("startTime")
+                .setSingleEvents(true)
+                .execute();
+        return events;
+    }
+    protected List<Event> getEvents(java.util.Calendar dateFrom, java.util.Calendar dateEnd) throws IOException, GeneralSecurityException {
+        final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+        Calendar service =
+                new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, CalendarCore.getCredentials(HTTP_TRANSPORT))
+                        .setApplicationName(APPLICATION_NAME)
+                        .build();
+        Events events = executeEvents(service,dateFrom,dateEnd);
+        return events.getItems();
+    }
+    public List<CalendarEvent> getSingleEvents(List<Event> items){
+        SingleTransformer singleTransformer = new SingleTransformer();
+       return singleTransformer.transformGoogleEvents(items);
+    }
+    public List<CalendarEvent> getMultyEvents(List<Event> items){
+        DateTranformer dateTranformer = new DateTranformer();
+        return dateTranformer.transformGoogleEvents(items);
     }
 }

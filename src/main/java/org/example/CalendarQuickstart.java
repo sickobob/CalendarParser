@@ -26,45 +26,24 @@ public class CalendarQuickstart {
 final static SimpleDateFormat format1= new SimpleDateFormat("dd.MM.yyyy");
   static   java.util.Calendar start = new GregorianCalendar();
    static java.util.Calendar end = new GregorianCalendar();
-    static   Events executeEvents(Calendar service, java.util.Calendar dateFrom, java.util.Calendar dateEnd) throws IOException {
-        DateTime dateTimeStart= new DateTime(dateFrom.getTimeInMillis());
-        DateTime dateTimeEnd= new DateTime(dateEnd.getTimeInMillis());
-        Events events = service.events().list("primary")
-                .setTimeMin(dateTimeStart)
-                .setTimeMax(dateTimeEnd)
-                .setOrderBy("startTime")
-                .setSingleEvents(true)
-                .execute();
-        return events;
-    }
+
     public static void main(String... args) throws IOException, GeneralSecurityException, ParseException {
         boolean flg = false;
         start.setTime(format1.parse(args[0]));
         end.setTime(format1.parse(args[1]));
-        final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         CalendarCore calendarCore = new CalendarCore();
-        Calendar service =
-                new Calendar.Builder(HTTP_TRANSPORT, calendarCore.JSON_FACTORY, calendarCore.getCredentials(HTTP_TRANSPORT))
-                        .setApplicationName(calendarCore.APPLICATION_NAME)
-                        .build();
-       Events events = executeEvents(service,start,end);
-       List<SingleEvent> singleEvents = new ArrayList<>();
-        List<MultyEvent> multyEvents = new ArrayList<>();
-         List<Event> items = events.getItems();
-
-        if (items.isEmpty()) {
+         List<Event> items = calendarCore.getEvents(start,end);
+         List<CalendarEvent> calendarEvents = new ArrayList<>();
+          calendarEvents = calendarCore.getMultyEvents(items);
+        if (calendarEvents.isEmpty()) {
             System.out.println("No upcoming events found.");
         } else {
-            if(flg){
-                System.out.println("Events:");
-                SingleEvent singleEvent = new SingleEvent();
-              singleEvents =  singleEvent.setArrayOfSingleEvents(items);
-               for (SingleEvent s : singleEvents) System.out.println(s.toString());
+            if(!flg){
+               for (CalendarEvent calendarEvent: calendarEvents)
+                   System.out.println(calendarEvent.toString());
             }
             else {
-                MultyEvent multyEvent = new MultyEvent();
-               multyEvents= multyEvent.setArrayOfMultyEvents(items);
-                for (MultyEvent m: multyEvents) System.out.println(m.toString());
+
             }
         }
     }
