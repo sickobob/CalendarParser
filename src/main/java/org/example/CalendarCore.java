@@ -25,9 +25,11 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /* class to demonstrate use of Calendar events list API */
 public class CalendarCore {
+    Map<String,String> surnames;
     /**
      * Application name.
      */
@@ -100,10 +102,13 @@ public class CalendarCore {
     }
     public List<CalendarEvent> getSingleEvents(List<Event> items){
         SingleTransformer singleTransformer = new SingleTransformer();
-       return singleTransformer.transformGoogleEvents(items);
+       return singleTransformer.transformGoogleEvents(items,this.surnames);
     }
     public List<CalendarEvent> getMultyEvents(List<Event> items){
         DateTranformer dateTranformer = new DateTranformer();
-        return dateTranformer.transformGoogleEvents(items);
+        return dateTranformer.transformGoogleEvents(items,this.surnames);
+    }
+    public CalendarCore(Map<String,String> surnames){
+        this.surnames=surnames;
     }
 }

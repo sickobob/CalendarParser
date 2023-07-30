@@ -13,6 +13,6 @@ public class CalendarEvent {
 
     @Override
     public String toString() {
-        return String.format("Name: %s, date %s -%s", getName(),format1.format(dateStart.getTime()),format1.format(dateEnd.getTime()));
+        return String.format("Name: %s, date %s - %s", getName(),format1.format(dateStart.getTime()),format1.format(dateEnd.getTime()));
     }
 }

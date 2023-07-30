@@ -8,31 +8,27 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 public class DateTranformer extends SingleTransformer{
     @Override
-    public List<CalendarEvent> transformGoogleEvents(List<Event> items) {
-        List<CalendarEvent> calendarEvents = new ArrayList<>();
-        for (Event event : items) {
-            DateTime start = event.getStart().getDateTime();
-            DateTime end = event.getEnd().getDateTime();
-            if (start == null) {
-                start = event.getStart().getDate();
-                end = event.getEnd().getDate();
-            }
-            CalendarEvent calendarEvent = new CalendarEvent();
-            calendarEvent = convertGoogleEvent(event);
-            calendarEvents.add(calendarEvent);
+    public List<CalendarEvent> transformGoogleEvents(List<Event> items, Map<String,String> surnames) {
+        List<CalendarEvent> calendarEvents=  new ArrayList<>();
+        for (CalendarEvent calendarEvent : super.transformGoogleEvents(items,surnames)) {
             long daysBetween = ChronoUnit.DAYS.between(calendarEvent.dateStart.toInstant(), calendarEvent.dateEnd.toInstant());
-            if (daysBetween!=0){
-                for (int i = 1; i <= daysBetween; i++) {
-                    CalendarEvent calendarEvent1 = new CalendarEvent();
-                    calendarEvent1 = convertGoogleEvent(event,i);
+            if (daysBetween>2) {
+                for (int i = 0; i <= daysBetween; i++) {
+                    CalendarEvent calendarEvent1;
+                    calendarEvent1 = convertGoogleEvent(calendarEvent, i);
                     calendarEvents.add(calendarEvent1);
                 }
-
-            }
-
+            } else if (daysBetween==2) {
+                for (int i = 0; i < daysBetween; i++) {
+                    CalendarEvent calendarEvent1;
+                    calendarEvent1 = convertGoogleEvent(calendarEvent, i);
+                    calendarEvents.add(calendarEvent1);
+                }
+            } else calendarEvents.add(calendarEvent);
         }
         return calendarEvents;
     }

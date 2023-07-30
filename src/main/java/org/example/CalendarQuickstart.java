@@ -28,26 +28,25 @@ final static SimpleDateFormat format1= new SimpleDateFormat("dd.MM.yyyy");
    static java.util.Calendar end = new GregorianCalendar();
 
     public static void main(String... args) throws IOException, GeneralSecurityException, ParseException {
-        boolean flg = false;
         start.setTime(format1.parse(args[0]));
         end.setTime(format1.parse(args[1]));
-        CalendarCore calendarCore = new CalendarCore();
+        Map<String, String> map1 = new HashMap<>();
+        map1.put("123","отпуск");
+        map1.put("3333", "отдых");
+        CalendarCore calendarCore = new CalendarCore(map1);
          List<Event> items = calendarCore.getEvents(start,end);
-         List<CalendarEvent> calendarEvents = new ArrayList<>();
-          calendarEvents = calendarCore.getMultyEvents(items);
+         List<CalendarEvent> calendarEvents;
+         calendarEvents = calendarCore.getMultyEvents(items);
         if (calendarEvents.isEmpty()) {
             System.out.println("No upcoming events found.");
         } else {
-            if(!flg){
                for (CalendarEvent calendarEvent: calendarEvents)
                    System.out.println(calendarEvent.toString());
-            }
-            else {
-
-            }
         }
     }
-
 }
+//java util map hashmap
+//на вход <String1, string2> если string1 содержится
+//беру ивент называю
 // [END calendar_quickstart]
 //"2023-01-01T00:00:00.000+03:00" "2023-12-31T00:00:00.000+03:00"
